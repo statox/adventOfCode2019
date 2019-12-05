@@ -20,42 +20,46 @@ const processOpCode = (fullCode) => {
         opCode: Number(String(fullCode).slice(-2))
     };
 };
+
 const runCode = (intcode) => {
     var instructionPointer = 0;
     var instructionCode = processOpCode(intcode[instructionPointer]);
 
     while (instructionCode.opCode !== OP_HALT) {
         // console.log(instructionCode);
+        var functionToApply;
         switch (instructionCode.opCode) {
             case OP_ADD:
-                instructionPointer = add(instructionPointer, intcode, instructionCode.modes);
+                functionToApply = add;
                 break;
             case OP_MUL:
-                instructionPointer = multiply(instructionPointer, intcode, instructionCode.modes);
+                functionToApply = multiply;
                 break;
             case OP_IN:
-                instructionPointer = input(instructionPointer, intcode, instructionCode.modes);
+                functionToApply = input;
                 break;
             case OP_OUT:
-                instructionPointer = output(instructionPointer, intcode, instructionCode.modes);
+                functionToApply = output;
                 break;
             case OP_JUMP_IF_TRUE:
-                instructionPointer = jumpIfTrue(instructionPointer, intcode, instructionCode.modes);
+                functionToApply = jumpIfTrue;
                 break;
             case OP_JUMP_IF_FALSE:
-                instructionPointer = jumpIfFalse(instructionPointer, intcode, instructionCode.modes);
+                functionToApply = jumpIfFalse;
                 break;
             case OP_LESS_THAN:
-                instructionPointer = lessThan(instructionPointer, intcode, instructionCode.modes);
+                functionToApply = lessThan;
                 break;
             case OP_EQUALS:
-                instructionPointer = equals(instructionPointer, intcode, instructionCode.modes);
+                functionToApply = equals;
                 break;
             default:
                 console.log('    something went wrong');
                 return -1;
                 break;
         }
+
+        instructionPointer = functionToApply(instructionPointer, intcode, instructionCode.modes);
         instructionCode = processOpCode(intcode[instructionPointer]);
     }
 
